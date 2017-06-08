@@ -13128,26 +13128,26 @@ var Drag = function Drag() {
 		return true;
 	};
 
-	(0, _jquery2.default)(document).on("mouseup touchend", function () {
+	(0, _jquery2.default)("#game").on("mouseup touchend", function () {
+		event.preventDefault();
 		if (_this.dragging) {
-			event.preventDefault();
 			_this.dragging = false;
 			if (_this.ondragend) _this.ondragend();
 		}
 	});
 
-	(0, _jquery2.default)(document).on("mousemove touchmove", function (event) {
+	(0, _jquery2.default)("#game").on("mousemove touchmove", function (event) {
+		event.preventDefault();
 		if (_this.dragging) {
-			event.preventDefault();
 			_this.position.x = event.pageX;
 			_this.position.y = event.pageY;
 			if (_this.ondragmove) _this.ondragmove(_this.position.x - _this.pivot.x, _this.position.y - _this.pivot.y);
 		}
 	});
 
-	(0, _jquery2.default)(document).on("mousedown touchstart", function (event) {
+	(0, _jquery2.default)("#game").on("mousedown touchstart", function (event) {
+		event.preventDefault();
 		if (!_this.dragging && _this.candrag()) {
-			event.preventDefault();
 			var doubleClick = false;
 			var now = Date.now();
 			if (_this.lastDrag && now - _this.lastDrag <= 300) {

@@ -16,17 +16,17 @@ export default class Drag {
 			return true;
 		};
 
-		$(document).on("mouseup touchend", () => {
+		$("#game").on("mouseup touchend", () => {
+			event.preventDefault();
 			if(this.dragging) {
-				event.preventDefault();
 				this.dragging = false;
 				if(this.ondragend) this.ondragend();
 			}
 		});
 
-		$(document).on("mousemove touchmove", (event) => {
+		$("#game").on("mousemove touchmove", (event) => {
+			event.preventDefault();
 			if(this.dragging) {
-				event.preventDefault();
 				this.position.x = event.pageX;
 				this.position.y = event.pageY;
 				if(this.ondragmove) this.ondragmove(
@@ -35,9 +35,9 @@ export default class Drag {
 			}
 		});
 
-		$(document).on("mousedown touchstart", (event) => {
+		$("#game").on("mousedown touchstart", (event) => {
+			event.preventDefault();
 			if(!this.dragging && this.candrag()) {
-				event.preventDefault();
 				let doubleClick = false;
 				let now = Date.now();
 				if(this.lastDrag && now - this.lastDrag <= 300) {
