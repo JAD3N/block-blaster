@@ -1,0 +1,35 @@
+{
+  "name": "block-blaster",
+  "version": "0.0.1",
+  "description": "URL minifier REST API website integration",
+  "repository": "https://github.com/JAD3N/urlify.js-server",
+  "author": "JAD3N",
+  "scripts": {
+    "dev": "npm run dist && gulp watch",
+    "dist": "gulp build"
+  },
+  "dependencies": {
+    "jquery": "^3.2.1",
+    "random-js": "^1.0.8"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.2.3",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "babelify": "^7.3.0",
+    "browser-sync": "^2.18.12",
+    "browserify": "^14.4.0",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-eslint": "^3.0.1",
+    "gulp-inject": "^4.2.0",
+    "gulp-notify": "^3.0.0",
+    "gulp-sass": "^3.1.0",
+    "gulp-sourcemaps": "^2.6.0",
+    "require-dir": "^0.3.1",
+    "run-sequence": "^1.2.2",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}

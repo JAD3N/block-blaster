@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Block Blaster</title>
+		<link rel="stylesheet" href="dist/css/main.css"/>
+		<link rel="stylesheet" href="dist/css/vendor.css"/>
+	</head>
+	<body>
+		<canvas id="game"></canvas>
+		<script src="dist/js/bundle.js"></script>
+		<script>
+			var game;
+			(function() {
+				game = new BlockBlaster({
+					canvas: "game"
+				});
+			})();
+		</script>
+		<script>
+			var test;
+		</script>
+	</body>
+</html>

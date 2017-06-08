@@ -1,0 +1,40 @@
+{
+    "rules": {
+        "indent": [
+            2,
+            "tab"
+        ],
+        "quotes": [
+            2,
+            "double"
+        ],
+        "linebreak-style": [
+            2,
+            "unix"
+        ],
+        "semi": [
+            2,
+            "always"
+        ],
+        "jsx-quotes": [
+            2,
+            "prefer-double"
+        ],
+        "no-console": 0
+    },
+    "env": {
+        "browser": true,
+        "es6": true,
+        "node": true,
+    },
+    "extends": "eslint:recommended",
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "ecmaVersion": 7,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true,
+            "modules": true
+        }
+    }
+}
