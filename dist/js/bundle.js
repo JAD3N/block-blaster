@@ -13128,7 +13128,7 @@ var Drag = function Drag() {
 		return true;
 	};
 
-	(0, _jquery2.default)("#game").on("mouseup touchend", function () {
+	(0, _jquery2.default)(document).on("mouseup touchend", function () {
 		event.preventDefault();
 		if (_this.dragging) {
 			_this.dragging = false;
@@ -13136,7 +13136,7 @@ var Drag = function Drag() {
 		}
 	});
 
-	(0, _jquery2.default)("#game").on("mousemove touchmove", function (event) {
+	(0, _jquery2.default)(document).on("mousemove touchmove", function (event) {
 		event.preventDefault();
 		if (_this.dragging) {
 			_this.position.x = event.pageX;
@@ -13145,7 +13145,7 @@ var Drag = function Drag() {
 		}
 	});
 
-	(0, _jquery2.default)("#game").on("mousedown touchstart", function (event) {
+	(0, _jquery2.default)(document).on("mousedown touchstart", function (event) {
 		event.preventDefault();
 		if (!_this.dragging && _this.candrag()) {
 			var doubleClick = false;
