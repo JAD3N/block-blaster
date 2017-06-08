@@ -16,7 +16,7 @@ export default class Drag {
 			return true;
 		};
 
-		$("#game").on("mouseup touchend", () => {
+		$(document).on("mouseup touchend", () => {
 			event.preventDefault();
 			if(this.dragging) {
 				this.dragging = false;
@@ -24,7 +24,7 @@ export default class Drag {
 			}
 		});
 
-		$("#game").on("mousemove touchmove", (event) => {
+		$(document).on("mousemove touchmove", (event) => {
 			event.preventDefault();
 			if(this.dragging) {
 				this.position.x = event.pageX;
@@ -35,7 +35,7 @@ export default class Drag {
 			}
 		});
 
-		$("#game").on("mousedown touchstart", (event) => {
+		$(document).on("mousedown touchstart", (event) => {
 			event.preventDefault();
 			if(!this.dragging && this.candrag()) {
 				let doubleClick = false;
