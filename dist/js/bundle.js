@@ -13132,7 +13132,7 @@ var Drag = function Drag() {
 		return true;
 	};
 
-	(0, _jquery2.default)(document).on("mouseup", function () {
+	(0, _jquery2.default)(document).on("mouseup touchend", function () {
 		if (_this.dragging) {
 			event.preventDefault();
 			_this.dragging = false;
@@ -13140,7 +13140,7 @@ var Drag = function Drag() {
 		}
 	});
 
-	(0, _jquery2.default)(document).on("mousemove", function (event) {
+	(0, _jquery2.default)(document).on("mousemove touchmove", function (event) {
 		if (_this.dragging) {
 			event.preventDefault();
 			_this.position.x = event.pageX;
@@ -13149,7 +13149,7 @@ var Drag = function Drag() {
 		}
 	});
 
-	(0, _jquery2.default)(document).on("mousedown", function (event) {
+	(0, _jquery2.default)(document).on("mousedown touchstart", function (event) {
 		if (!_this.dragging && _this.candrag()) {
 			event.preventDefault();
 			if (_this.ondragstart) {

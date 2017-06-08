@@ -17,7 +17,7 @@ export default class Drag {
 			return true;
 		};
 
-		$(document).on("mouseup", () => {
+		$(document).on("mouseup touchend", () => {
 			if(this.dragging) {
 				event.preventDefault();
 				this.dragging = false;
@@ -25,7 +25,7 @@ export default class Drag {
 			}
 		});
 
-		$(document).on("mousemove", (event) => {
+		$(document).on("mousemove touchmove", (event) => {
 			if(this.dragging) {
 				event.preventDefault();
 				this.position.x = event.pageX;
@@ -36,7 +36,7 @@ export default class Drag {
 			}
 		});
 
-		$(document).on("mousedown", (event) => {
+		$(document).on("mousedown touchstart", (event) => {
 			if(!this.dragging && this.candrag()) {
 				event.preventDefault();
 				if(this.ondragstart) {
