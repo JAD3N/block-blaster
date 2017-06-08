@@ -1,0 +1,17 @@
+html {
+  box-sizing: border-box;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility; }
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: 'Open Sans', sans-serif; }
+
+canvas#game {
+  width: 100vw;
+  height: 100vh; }
+
+/*# sourceMappingURL=main.css.map */

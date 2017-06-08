@@ -1,0 +1,1 @@
+{"version":3,"file":"game.css","sources":["components/game.scss"],"sourcesContent":["canvas#game {\r\n\twidth: 100vw;\r\n\theight: 100vh;\r\n}\r\n"],"names":[],"mappings":"AAAA,AAAA,MAAM,AAAA,KAAK,CAAC;EACX,KAAK,EAAE,KAAK;EACZ,MAAM,EAAE,KAAK,GACb"}
