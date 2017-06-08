@@ -12343,10 +12343,6 @@ var _block3 = require("./core/block");
 
 var _block4 = _interopRequireDefault(_block3);
 
-var _jquery = require("jquery");
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
 var _randomJs = require("random-js");
 
 var _randomJs2 = _interopRequireDefault(_randomJs);
@@ -12370,29 +12366,24 @@ var Controller = function () {
 		};
 		var initialPos = { x: 0, y: 0 };
 		this.drag.ondragstart = function (event) {
-			var cancel = true;
+			var shape = null;
 			shapes: for (var i = _this.shapes.length - 1; i >= 0; i--) {
-				var shape = _this.shapes[i];
+				var shape2 = _this.shapes[i];
 				var gridPos = _this.game.renderer.getGridPos(_this.game.grid);
-				var deltaX = event.position.x - gridPos.x - shape.x;
-				var deltaY = event.position.y - gridPos.y - shape.y;
+				var deltaX = event.position.x - gridPos.x - shape2.x;
+				var deltaY = event.position.y - gridPos.y - shape2.y;
 				var _iteratorNormalCompletion = true;
 				var _didIteratorError = false;
 				var _iteratorError = undefined;
 
 				try {
-					for (var _iterator = (0, _getIterator3.default)(shape.blocks), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+					for (var _iterator = (0, _getIterator3.default)(shape2.blocks), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 						var block = _step.value;
 
 						if (!block) continue;
 						var offsets = _renderer2.default.BLOCK.getOffsets(block);
 						if (deltaX >= offsets.x && deltaX <= offsets.x + _renderer2.default.BLOCK.size && deltaY >= offsets.y && deltaY <= offsets.y + _renderer2.default.BLOCK.size) {
-							initialPos.x = shape.x;
-							initialPos.y = shape.y;
-							_this.shapes.splice(_this.shapes.indexOf(shape), 1);
-							_this.shapes.splice(_this.shapes.length, 0, shape);
-							(_this.dragging = shape).dragging = true;
-							cancel = false;
+							shape = shape2;
 							break shapes;
 						}
 					}
@@ -12411,7 +12402,18 @@ var Controller = function () {
 					}
 				}
 			}
-			event.cancelled = cancel;
+			if (shape) {
+				if (event.doubleClick) {
+					shape.rotate(true);
+					event.cancelled = true;
+					return;
+				}
+				initialPos.x = shape.x;
+				initialPos.y = shape.y;
+				_this.shapes.splice(_this.shapes.indexOf(shape), 1);
+				_this.shapes.splice(_this.shapes.length, 0, shape);
+				(_this.dragging = shape).dragging = true;
+			} else event.cancelled = true;
 		};
 		this.drag.ondragmove = function (x, y) {
 			if (_this.dragging) {
@@ -12425,12 +12427,6 @@ var Controller = function () {
 			_this.snap(true);
 			_this.dragging = null;
 		};
-		(0, _jquery2.default)(document).on("keydown", function (event) {
-			if (event.keyCode === 32 && !!_this.dragging) {
-				_this.dragging.rotate(true);
-			}
-		});
-
 		this.update();
 	}
 
@@ -12632,7 +12628,7 @@ var Controller = function () {
 
 exports.default = Controller;
 
-},{"./core/block":96,"./core/pattern":98,"./core/shape":99,"./renderer":100,"./util/colour":101,"./util/drag":102,"babel-runtime/core-js/get-iterator":1,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9,"jquery":92,"random-js":93}],96:[function(require,module,exports){
+},{"./core/block":96,"./core/pattern":98,"./core/shape":99,"./renderer":100,"./util/colour":101,"./util/drag":102,"babel-runtime/core-js/get-iterator":1,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9,"random-js":93}],96:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13016,7 +13012,7 @@ Renderer.BLOCK = {
 	margin: 8,
 	shadow: 4,
 	radius: 4,
-	snap: 8,
+	snap: 16,
 
 	getOffsets: function getOffsets(block) {
 		var emptyOff = block.empty ? (this.size - this.emptySize) / 2 : 0;
@@ -13152,20 +13148,30 @@ var Drag = function Drag() {
 	(0, _jquery2.default)(document).on("mousedown touchstart", function (event) {
 		if (!_this.dragging && _this.candrag()) {
 			event.preventDefault();
+			var doubleClick = false;
+			var now = Date.now();
+			if (_this.lastDrag && now - _this.lastDrag <= 300) {
+				doubleClick = true;
+				_this.lastDrag = null;
+			} else {
+				_this.lastDrag = now;
+			}
+			var event2 = {
+				position: {
+					x: event.pageX,
+					y: event.pageY
+				},
+				doubleClick: doubleClick,
+				originalEvent: event,
+				cancelled: false
+			};
 			if (_this.ondragstart) {
-				var event2 = {
-					position: {
-						x: event.pageX,
-						y: event.pageY
-					},
-					cancelled: false
-				};
 				_this.ondragstart(event2);
-				if (!event2.cancelled) {
-					_this.dragging = true;
-					_this.pivot.x = event.pageX;
-					_this.pivot.y = event.pageY;
-				}
+			}
+			if (!event2.cancelled) {
+				_this.dragging = true;
+				_this.pivot.x = event.pageX;
+				_this.pivot.y = event.pageY;
 			}
 		}
 	});

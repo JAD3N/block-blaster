@@ -128,7 +128,7 @@ Renderer.BLOCK = {
 	margin: 8,
 	shadow: 4,
 	radius: 4,
-	snap: 8,
+	snap: 16,
 
 	getOffsets: function(block) {
 		let emptyOff = block.empty ? (this.size - this.emptySize) / 2 : 0;

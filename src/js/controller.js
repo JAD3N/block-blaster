@@ -4,7 +4,6 @@ import Renderer from "./renderer";
 import Pattern from "./core/pattern";
 import Shape from "./core/shape";
 import Block from "./core/block";
-import $ from "jquery";
 import Random from "random-js";
 
 export default class Controller {
@@ -21,27 +20,33 @@ export default class Controller {
 		};
 		var initialPos = {x: 0, y: 0};
 		this.drag.ondragstart = (event) => {
-			let cancel = true;
+			let shape = null;
 			shapes: for(let i = this.shapes.length - 1; i >= 0; i--) {
-				let shape = this.shapes[i];
+				let shape2 = this.shapes[i];
 				let gridPos = this.game.renderer.getGridPos(this.game.grid);
-				let deltaX = event.position.x - gridPos.x - shape.x;
-				let deltaY = event.position.y - gridPos.y - shape.y;
-				for(let block of shape.blocks) {
+				let deltaX = event.position.x - gridPos.x - shape2.x;
+				let deltaY = event.position.y - gridPos.y - shape2.y;
+				for(let block of shape2.blocks) {
 					if(!block) continue;
 					let offsets = Renderer.BLOCK.getOffsets(block);
 					if(deltaX >= offsets.x && deltaX <= offsets.x + Renderer.BLOCK.size && deltaY >= offsets.y && deltaY <= offsets.y + Renderer.BLOCK.size) {
-						initialPos.x = shape.x;
-						initialPos.y = shape.y;
-						this.shapes.splice(this.shapes.indexOf(shape), 1);
-						this.shapes.splice(this.shapes.length, 0, shape);
-						(this.dragging = shape).dragging = true;
-						cancel = false;
+						shape = shape2;
 						break shapes;
 					}
 				}
 			}
-			event.cancelled = cancel;
+			if(shape) {
+				if(event.doubleClick) {
+					shape.rotate(true);
+					event.cancelled = true;
+					return;
+				}
+				initialPos.x = shape.x;
+				initialPos.y = shape.y;
+				this.shapes.splice(this.shapes.indexOf(shape), 1);
+				this.shapes.splice(this.shapes.length, 0, shape);
+				(this.dragging = shape).dragging = true;
+			} else event.cancelled = true;
 		};
 		this.drag.ondragmove = (x, y) => {
 			if(this.dragging) {
@@ -55,12 +60,6 @@ export default class Controller {
 			this.snap(true);
 			this.dragging = null;
 		};
-		$(document).on("keydown", (event) => {
-			if(event.keyCode === 32 && !!this.dragging) {
-				this.dragging.rotate(true);
-			}
-		});
-
 		this.update();
 	}
 
