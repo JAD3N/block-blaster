@@ -5,6 +5,7 @@ import Pattern from "./core/pattern";
 import Shape from "./core/shape";
 import Block from "./core/block";
 import Random from "random-js";
+import $ from "jquery";
 
 export default class Controller {
 
@@ -60,6 +61,11 @@ export default class Controller {
 			this.snap(true);
 			this.dragging = null;
 		};
+		$(window).on("keydown", (event) => {
+			if(event.keyCode === 32) {
+				this.dragging && this.dragging.rotate(true);
+			}
+		});
 		this.update();
 	}
 

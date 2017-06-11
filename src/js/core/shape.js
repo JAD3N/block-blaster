@@ -16,8 +16,8 @@ export default class Shape extends Grid {
 		let blocks = new Array(height * width);
 		for(let x = 0; x < width; x++) {
 			for(let y = 0; y < height; y++) {
-				let x2 = cw ? y : height - 1 - y;
-				let y2 = cw ? width - 1 - x : x;
+				let x2 = cw ? height - 1 - y : y;
+				let y2 = cw ? x : width - 1 - x;
 
 				let block = this.get(x, y);
 				if(block) {

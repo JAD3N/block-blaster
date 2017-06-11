@@ -12343,6 +12343,10 @@ var _randomJs = require("random-js");
 
 var _randomJs2 = _interopRequireDefault(_randomJs);
 
+var _jquery = require("jquery");
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Controller = function () {
@@ -12423,6 +12427,11 @@ var Controller = function () {
 			_this.snap(true);
 			_this.dragging = null;
 		};
+		(0, _jquery2.default)(window).on("keydown", function (event) {
+			if (event.keyCode === 32) {
+				_this.dragging && _this.dragging.rotate(true);
+			}
+		});
 		this.update();
 	}
 
@@ -12650,7 +12659,7 @@ var Controller = function () {
 
 exports.default = Controller;
 
-},{"./core/block":96,"./core/pattern":98,"./core/shape":99,"./renderer":100,"./util/colour":101,"./util/drag":102,"babel-runtime/core-js/get-iterator":1,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9,"random-js":93}],96:[function(require,module,exports){
+},{"./core/block":96,"./core/pattern":98,"./core/shape":99,"./renderer":100,"./util/colour":101,"./util/drag":102,"babel-runtime/core-js/get-iterator":1,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9,"jquery":92,"random-js":93}],96:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12851,8 +12860,8 @@ var Shape = function (_Grid) {
 			var blocks = new Array(height * width);
 			for (var x = 0; x < width; x++) {
 				for (var y = 0; y < height; y++) {
-					var x2 = cw ? y : height - 1 - y;
-					var y2 = cw ? width - 1 - x : x;
+					var x2 = cw ? height - 1 - y : y;
+					var y2 = cw ? x : width - 1 - x;
 
 					var block = this.get(x, y);
 					if (block) {
