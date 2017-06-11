@@ -42,10 +42,6 @@ class BlockBlaster {
 	}
 
 	draw() {
-		if(this.canvas.clientWidth !== this.canvas.width || this.canvas.clientHeight !== this.canvas.height) {
-			this.canvas.width = this.canvas.clientWidth;
-			this.canvas.height = this.canvas.clientHeight;
-		}
 		this.renderer.draw(this.grid, this.controller.shapes, this.score, this.highScore);
 		global.requestAnimationFrame(() => {
 			this.draw();

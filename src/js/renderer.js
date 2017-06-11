@@ -5,9 +5,18 @@ class Renderer {
 	constructor(canvas) {
 		this.canvas = canvas;
 		this.ctx = this.canvas.getContext("2d");
+		this.updateSize();
+	}
+
+	updateSize() {
+		if(this.canvas.clientWidth !== this.canvas.width || this.canvas.clientHeight !== this.canvas.height) {
+			this.canvas.width = this.canvas.clientWidth;
+			this.canvas.height = this.canvas.clientHeight;
+		}
 	}
 
 	draw(grid, shapes, score, highScore) {
+		this.updateSize();
 		this.clear();
 		this.drawGrid(grid);
 		// iterate shapes backwards
@@ -37,9 +46,8 @@ class Renderer {
 	}
 
 	drawShape(grid, shape) {
-		let pos = this.getGridPos(grid);
-		let x = pos.x;
-		let y = pos.y;
+		let x = this.canvas.width / 2;
+		let y = this.canvas.height / 2;
 		for(let x2 = 0; x2 < shape.width; x2++) {
 			for(let y2 = 0; y2 < shape.height; y2++) {
 				let block = shape.get(x2, y2);

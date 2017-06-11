@@ -10,11 +10,11 @@
 		<script src="dist/js/bundle.js"></script>
 		<script>
 			var game;
-			(function() {
+			window.onload = () => {
 				game = new BlockBlaster({
 					canvas: "game"
 				});
-			})();
+			};
 		</script>
 		<script>
 			var test;

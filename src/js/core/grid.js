@@ -27,8 +27,8 @@ export default class Grid {
 
 	get screenSize() {
 		return {
-			width: (this.width * Renderer.BLOCK.size) + ((this.width - 1) * Renderer.BLOCK.margin) + Renderer.BLOCK.shadow,
-			height: (this.height * Renderer.BLOCK.size) + ((this.height - 1) * Renderer.BLOCK.margin) + Renderer.BLOCK.shadow
+			width: (this.width * Renderer.BLOCK.size) + ((this.width - 1) * Renderer.BLOCK.margin),
+			height: (this.height * Renderer.BLOCK.size) + ((this.height - 1) * Renderer.BLOCK.margin)
 		};
 	}
 

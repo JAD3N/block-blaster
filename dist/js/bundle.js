@@ -12262,10 +12262,6 @@ var BlockBlaster = function () {
 		value: function draw() {
 			var _this = this;
 
-			if (this.canvas.clientWidth !== this.canvas.width || this.canvas.clientHeight !== this.canvas.height) {
-				this.canvas.width = this.canvas.clientWidth;
-				this.canvas.height = this.canvas.clientHeight;
-			}
 			this.renderer.draw(this.grid, this.controller.shapes, this.score, this.highScore);
 			global.requestAnimationFrame(function () {
 				_this.draw();
@@ -12335,9 +12331,9 @@ var _pattern = require("./core/pattern");
 
 var _pattern2 = _interopRequireDefault(_pattern);
 
-var _shape = require("./core/shape");
+var _shape2 = require("./core/shape");
 
-var _shape2 = _interopRequireDefault(_shape);
+var _shape3 = _interopRequireDefault(_shape2);
 
 var _block3 = require("./core/block");
 
@@ -12358,7 +12354,7 @@ var Controller = function () {
 		this.shapes = [];
 		this.dragging = null;
 		this.game = game;
-		this.drag = new _drag2.default();
+		this.drag = new _drag2.default(this.game.canvas.id);
 		this.concurrentShapes = 3;
 		this.random = new _randomJs2.default();
 		this.drag.candrag = function () {
@@ -12367,11 +12363,11 @@ var Controller = function () {
 		var initialPos = { x: 0, y: 0 };
 		this.drag.ondragstart = function (event) {
 			var shape = null;
+			var canvas = _this.game.canvas;
 			shapes: for (var i = _this.shapes.length - 1; i >= 0; i--) {
 				var shape2 = _this.shapes[i];
-				var gridPos = _this.game.renderer.getGridPos(_this.game.grid);
-				var deltaX = event.position.x - gridPos.x - shape2.x;
-				var deltaY = event.position.y - gridPos.y - shape2.y;
+				var deltaX = event.position.x - canvas.width / 2 - shape2.x;
+				var deltaY = event.position.y - canvas.height / 2 - shape2.y;
 				var _iteratorNormalCompletion = true;
 				var _didIteratorError = false;
 				var _iteratorError = undefined;
@@ -12435,6 +12431,7 @@ var Controller = function () {
 		value: function update() {
 			var array = [];
 			var grid = this.game.grid;
+			var canvas = this.game.canvas;
 			// check y direction
 			for (var x = 0; x < grid.width; x++) {
 				var temp = [];
@@ -12499,17 +12496,37 @@ var Controller = function () {
 			}
 
 			if (this.shapes.length == 0) {
+				var totalWidth = 0;
 				for (var i = 0; i < this.concurrentShapes; i++) {
 					var shape = this.getShape(this.random.pick(_pattern2.default));
 					shape.colour = _colour2.default.random(["GREY"]);
+
+					var size = shape.screenSize;
+					totalWidth += size.width;
+					shape.y = -size.height / 2;
 					this.shapes.push(shape);
+				}
+				var screenWidth = canvas.width * 0.6;
+				var gridPos = this.game.renderer.getGridPos(grid);
+				var bottom = gridPos.y + gridPos.height;
+				if (screenWidth < gridPos.width) {
+					screenWidth = gridPos.width;
+				}
+				var gapX = (screenWidth - totalWidth) / (this.shapes.length + 1);
+				var gapY = canvas.height - bottom;
+				for (var _i = 0, _x2 = gapX; _i < this.shapes.length; _i++) {
+					var _shape = this.shapes[_i];
+					var _size = _shape.screenSize;
+					_shape.x = _x2 - screenWidth / 2;
+					_shape.y = (gapY - _size.height) / 2 + bottom - canvas.height / 2;
+					_x2 += gapX + _size.width;
 				}
 			}
 		}
 	}, {
 		key: "getShape",
 		value: function getShape(pattern) {
-			var shape = new _shape2.default(0, 0, pattern.width, pattern.height);
+			var shape = new _shape3.default(0, 0, pattern.width, pattern.height);
 			for (var x = 0; x < pattern.width; x++) {
 				for (var y = 0; y < pattern.height; y++) {
 					if (pattern.data[x + y * pattern.width] === 1) {
@@ -12524,12 +12541,17 @@ var Controller = function () {
 		value: function snap() {
 			var place = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
-			var blockSize = _renderer2.default.BLOCK.size + _renderer2.default.BLOCK.margin;
-			var x = Math.round(this.dragging.x / blockSize);
-			var y = Math.round(this.dragging.y / blockSize);
+			var canvas = this.game.canvas;
+			var gridPos = this.game.renderer.getGridPos(this.game.grid);
+			var a = canvas.width / 2 - gridPos.x;
+			var b = canvas.height / 2 - gridPos.y;
 
-			var xDelta = this.dragging.x - x * blockSize;
-			var yDelta = this.dragging.y - y * blockSize;
+			var blockSize = _renderer2.default.BLOCK.size + _renderer2.default.BLOCK.margin;
+			var x = Math.round((this.dragging.x + a) / blockSize);
+			var y = Math.round((this.dragging.y + b) / blockSize);
+
+			var xDelta = this.dragging.x + a - x * blockSize;
+			var yDelta = this.dragging.y + b - y * blockSize;
 
 			// check if supposed to snap
 			if (this.fits(this.dragging, x, y)) {
@@ -12711,8 +12733,8 @@ var Grid = function () {
 		key: "screenSize",
 		get: function get() {
 			return {
-				width: this.width * _renderer2.default.BLOCK.size + (this.width - 1) * _renderer2.default.BLOCK.margin + _renderer2.default.BLOCK.shadow,
-				height: this.height * _renderer2.default.BLOCK.size + (this.height - 1) * _renderer2.default.BLOCK.margin + _renderer2.default.BLOCK.shadow
+				width: this.width * _renderer2.default.BLOCK.size + (this.width - 1) * _renderer2.default.BLOCK.margin,
+				height: this.height * _renderer2.default.BLOCK.size + (this.height - 1) * _renderer2.default.BLOCK.margin
 			};
 		}
 	}]);
@@ -12877,11 +12899,21 @@ var Renderer = function () {
 
 		this.canvas = canvas;
 		this.ctx = this.canvas.getContext("2d");
+		this.updateSize();
 	}
 
 	(0, _createClass3.default)(Renderer, [{
+		key: "updateSize",
+		value: function updateSize() {
+			if (this.canvas.clientWidth !== this.canvas.width || this.canvas.clientHeight !== this.canvas.height) {
+				this.canvas.width = this.canvas.clientWidth;
+				this.canvas.height = this.canvas.clientHeight;
+			}
+		}
+	}, {
 		key: "draw",
 		value: function draw(grid, shapes, score, highScore) {
+			this.updateSize();
 			this.clear();
 			this.drawGrid(grid);
 			// iterate shapes backwards
@@ -12914,9 +12946,8 @@ var Renderer = function () {
 	}, {
 		key: "drawShape",
 		value: function drawShape(grid, shape) {
-			var pos = this.getGridPos(grid);
-			var x = pos.x;
-			var y = pos.y;
+			var x = this.canvas.width / 2;
+			var y = this.canvas.height / 2;
 			for (var x2 = 0; x2 < shape.width; x2++) {
 				for (var y2 = 0; y2 < shape.height; y2++) {
 					var block = shape.get(x2, y2);
@@ -13110,7 +13141,7 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Drag = function Drag() {
+var Drag = function Drag(el) {
 	var _this = this;
 
 	(0, _classCallCheck3.default)(this, Drag);
@@ -13128,26 +13159,26 @@ var Drag = function Drag() {
 		return true;
 	};
 
-	(0, _jquery2.default)(document).on("mouseup touchend", function () {
-		event.preventDefault();
+	(0, _jquery2.default)("#" + el).on("mouseup touchend", function (event) {
 		if (_this.dragging) {
+			event.preventDefault();
 			_this.dragging = false;
 			if (_this.ondragend) _this.ondragend();
 		}
 	});
 
-	(0, _jquery2.default)(document).on("mousemove touchmove", function (event) {
-		event.preventDefault();
+	(0, _jquery2.default)("#" + el).on("mousemove touchmove", function (event) {
 		if (_this.dragging) {
+			event.preventDefault();
 			_this.position.x = event.pageX;
 			_this.position.y = event.pageY;
 			if (_this.ondragmove) _this.ondragmove(_this.position.x - _this.pivot.x, _this.position.y - _this.pivot.y);
 		}
 	});
 
-	(0, _jquery2.default)(document).on("mousedown touchstart", function (event) {
-		event.preventDefault();
+	(0, _jquery2.default)("#" + el).on("mousedown touchstart", function (event) {
 		if (!_this.dragging && _this.candrag()) {
+			event.preventDefault();
 			var doubleClick = false;
 			var now = Date.now();
 			if (_this.lastDrag && now - _this.lastDrag <= 300) {

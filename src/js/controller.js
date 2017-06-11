@@ -12,7 +12,7 @@ export default class Controller {
 		this.shapes = [];
 		this.dragging = null;
 		this.game = game;
-		this.drag = new Drag();
+		this.drag = new Drag(this.game.canvas.id);
 		this.concurrentShapes = 3;
 		this.random = new Random();
 		this.drag.candrag = () => {
@@ -21,11 +21,11 @@ export default class Controller {
 		var initialPos = {x: 0, y: 0};
 		this.drag.ondragstart = (event) => {
 			let shape = null;
+			let canvas = this.game.canvas;
 			shapes: for(let i = this.shapes.length - 1; i >= 0; i--) {
 				let shape2 = this.shapes[i];
-				let gridPos = this.game.renderer.getGridPos(this.game.grid);
-				let deltaX = event.position.x - gridPos.x - shape2.x;
-				let deltaY = event.position.y - gridPos.y - shape2.y;
+				let deltaX = event.position.x - (canvas.width / 2) - shape2.x;
+				let deltaY = event.position.y - (canvas.height / 2) - shape2.y;
 				for(let block of shape2.blocks) {
 					if(!block) continue;
 					let offsets = Renderer.BLOCK.getOffsets(block);
@@ -66,6 +66,7 @@ export default class Controller {
 	update() {
 		let array = [];
 		let grid = this.game.grid;
+		let canvas = this.game.canvas;
 		// check y direction
 		for(let x = 0; x < grid.width; x++) {
 			let temp = [];
@@ -109,10 +110,30 @@ export default class Controller {
 		}
 
 		if(this.shapes.length == 0) {
+			let totalWidth = 0;
 			for(let i = 0; i < this.concurrentShapes; i++) {
 				let shape = this.getShape(this.random.pick(Pattern));
 				shape.colour = Colour.random(["GREY"]);
+
+				let size = shape.screenSize;
+				totalWidth += size.width;
+				shape.y = -size.height / 2;
 				this.shapes.push(shape);
+			}
+			let screenWidth = canvas.width * 0.6;
+			let gridPos = this.game.renderer.getGridPos(grid);
+			let bottom = gridPos.y + gridPos.height;
+			if(screenWidth < gridPos.width) {
+				screenWidth = gridPos.width;
+			}
+			let gapX = (screenWidth - totalWidth) / (this.shapes.length + 1);
+			let gapY = canvas.height - bottom;
+			for(let i = 0, x = gapX; i < this.shapes.length; i++) {
+				let shape = this.shapes[i];
+				let size = shape.screenSize;
+				shape.x = x - (screenWidth / 2);
+				shape.y = ((gapY - size.height) / 2) + bottom - (canvas.height / 2);
+				x += gapX + size.width;
 			}
 		}
 	}
@@ -130,12 +151,17 @@ export default class Controller {
 	}
 
 	snap(place = false) {
-		let blockSize = Renderer.BLOCK.size + Renderer.BLOCK.margin;
-		let x = Math.round(this.dragging.x / blockSize);
-		let y = Math.round(this.dragging.y / blockSize);
+		let canvas = this.game.canvas;
+		let gridPos = this.game.renderer.getGridPos(this.game.grid);
+		let a = (canvas.width / 2) - gridPos.x;
+		let b = (canvas.height / 2) - gridPos.y;
 
-		let xDelta = this.dragging.x - (x * blockSize);
-		let yDelta = this.dragging.y - (y * blockSize);
+		let blockSize = Renderer.BLOCK.size + Renderer.BLOCK.margin;
+		let x = Math.round((this.dragging.x + a) / blockSize);
+		let y = Math.round((this.dragging.y + b) / blockSize);
+
+		let xDelta = (this.dragging.x + a) - (x * blockSize);
+		let yDelta = (this.dragging.y + b) - (y * blockSize);
 
 		// check if supposed to snap
 		if(this.fits(this.dragging, x, y)) {
