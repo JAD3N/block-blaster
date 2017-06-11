@@ -12251,7 +12251,7 @@ var BlockBlaster = function () {
 		this.controller = new _controller2.default(this);
 
 		this._score = 0;
-		this._highScore = 0;
+		this._highscore = 0;
 
 		_log2.default.info("BlockBlaster initialized");
 		this.draw();
@@ -12262,7 +12262,7 @@ var BlockBlaster = function () {
 		value: function draw() {
 			var _this = this;
 
-			this.renderer.draw(this.grid, this.controller.shapes, this.score, this.highScore);
+			this.renderer.draw(this.grid, this.controller.shapes, this.score);
 			global.requestAnimationFrame(function () {
 				_this.draw();
 			});
@@ -12274,17 +12274,17 @@ var BlockBlaster = function () {
 		},
 		set: function set(score) {
 			this._score = score;
-			if (score > this._highScore) {
-				this.highScore = score;
+			if (score > this._highscore) {
+				this.highscore = score;
 			}
 		}
 	}, {
-		key: "highScore",
+		key: "highscore",
 		get: function get() {
-			return this._highScore;
+			return this._highscore;
 		},
-		set: function set(highScore) {
-			this._highScore = highScore;
+		set: function set(highscore) {
+			this._highscore = highscore;
 		}
 	}]);
 	return BlockBlaster;
@@ -12912,15 +12912,15 @@ var Renderer = function () {
 		}
 	}, {
 		key: "draw",
-		value: function draw(grid, shapes, score, highScore) {
+		value: function draw(grid, shapes, score) {
 			this.updateSize();
 			this.clear();
 			this.drawGrid(grid);
+			this.drawScores(grid, score);
 			// iterate shapes backwards
 			for (var i = 0; i < shapes.length; i++) {
 				this.drawShape(grid, shapes[i]);
 			}
-			this.drawScores(grid, score, highScore);
 		}
 	}, {
 		key: "clear",
@@ -12931,17 +12931,21 @@ var Renderer = function () {
 		}
 	}, {
 		key: "drawScores",
-		value: function drawScores(grid, score, highScore) {
-			this.ctx.font = "40px Open Sans";
-			this.ctx.fillStyle = "#FFFFFF";
-
+		value: function drawScores(grid, score) {
 			var pos = this.getGridPos(grid);
-
+			this.ctx.fillStyle = "#FFFFFF";
+			roundRect(this.ctx, pos.x, pos.y - 100, pos.width, 80, Renderer.BLOCK.radius);
+			this.ctx.fill();
+			this.ctx.font = "300 40px Open Sans";
+			this.ctx.fillStyle = "#000000";
 			this.ctx.textAlign = "left";
-			this.ctx.fillText(score, pos.x + 10, pos.y - 20);
-
+			this.ctx.fillText("Score:", pos.x + 20, pos.y - 45);
 			this.ctx.textAlign = "right";
-			this.ctx.fillText(highScore, pos.x + pos.width - 10, pos.y - 20);
+			var str = score.toLocaleString();
+			if (score >= 1000000000) {
+				str = "OMG!";
+			}
+			this.ctx.fillText(str, pos.x + pos.width - 20, pos.y - 45);
 		}
 	}, {
 		key: "drawShape",
@@ -12992,23 +12996,6 @@ var Renderer = function () {
 		value: function drawBlock(block, x, y, colour) {
 			var dragging = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
 
-			function roundRect(ctx, x, y, width, height, radius) {
-				var r2d = Math.PI / 180;
-				var x2 = x + width;
-				var y2 = y + height;
-				ctx.beginPath();
-				ctx.moveTo(x + radius, y);
-				ctx.lineTo(x2 - radius, y);
-				ctx.arc(x2 - radius, y + radius, radius, r2d * 270, r2d * 360, false);
-				ctx.lineTo(x2, y2 - radius);
-				ctx.arc(x2 - radius, y2 - radius, radius, r2d * 0, r2d * 90, false);
-				ctx.lineTo(x + radius, y2);
-				ctx.arc(x + radius, y2 - radius, radius, r2d * 90, r2d * 180, false);
-				ctx.lineTo(x, y + radius);
-				ctx.arc(x + radius, y + radius, radius, r2d * 180, r2d * 270, false);
-				ctx.closePath();
-			}
-
 			var blockColour = colour || (block.empty ? _colour2.default.GREY : block.colour);
 			var blockSize = block.empty ? Renderer.BLOCK.emptySize : Renderer.BLOCK.size;
 
@@ -13052,6 +13039,23 @@ Renderer.BLOCK = {
 		return { x: x, y: y };
 	}
 };
+
+function roundRect(ctx, x, y, width, height, radius) {
+	var r2d = Math.PI / 180;
+	var x2 = x + width;
+	var y2 = y + height;
+	ctx.beginPath();
+	ctx.moveTo(x + radius, y);
+	ctx.lineTo(x2 - radius, y);
+	ctx.arc(x2 - radius, y + radius, radius, r2d * 270, r2d * 360, false);
+	ctx.lineTo(x2, y2 - radius);
+	ctx.arc(x2 - radius, y2 - radius, radius, r2d * 0, r2d * 90, false);
+	ctx.lineTo(x + radius, y2);
+	ctx.arc(x + radius, y2 - radius, radius, r2d * 90, r2d * 180, false);
+	ctx.lineTo(x, y + radius);
+	ctx.arc(x + radius, y + radius, radius, r2d * 180, r2d * 270, false);
+	ctx.closePath();
+}
 
 exports.default = Renderer;
 

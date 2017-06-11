@@ -1,1 +1,1 @@
-{"version":3,"file":"vendor.css","sources":["vendor.scss"],"sourcesContent":["@import url('https://fonts.googleapis.com/css?family=Open+Sans');\r\n"],"names":[],"mappings":"AAAA,OAAO,CAAC,wDAAI"}
+{"version":3,"file":"vendor.css","sources":["vendor.scss"],"sourcesContent":["@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400');\r\n"],"names":[],"mappings":"AAAA,OAAO,CAAC,gEAAI"}

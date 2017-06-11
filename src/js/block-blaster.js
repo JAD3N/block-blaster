@@ -16,7 +16,7 @@ class BlockBlaster {
 		this.controller = new Controller(this);
 
 		this._score = 0;
-		this._highScore = 0;
+		this._highscore = 0;
 
 		Log.info("BlockBlaster initialized");
 		this.draw();
@@ -28,21 +28,21 @@ class BlockBlaster {
 
 	set score(score) {
 		this._score = score;
-		if(score > this._highScore) {
-			this.highScore = score;
+		if(score > this._highscore) {
+			this.highscore = score;
 		}
 	}
 
-	get highScore() {
-		return this._highScore;
+	get highscore() {
+		return this._highscore;
 	}
 
-	set highScore(highScore) {
-		this._highScore = highScore;
+	set highscore(highscore) {
+		this._highscore = highscore;
 	}
 
 	draw() {
-		this.renderer.draw(this.grid, this.controller.shapes, this.score, this.highScore);
+		this.renderer.draw(this.grid, this.controller.shapes, this.score);
 		global.requestAnimationFrame(() => {
 			this.draw();
 		});
